@@ -91,19 +91,33 @@ const AppHeader = () => {
           <strong className="fs-6">Web IDE 项目管理后台</strong>
           <small className="text-body-secondary">用户 · 房间 · 文件 · 运行记录</small>
         </div>
-        <CHeaderNav className="d-none d-md-flex">
+        <CHeaderNav className="d-none d-md-flex ms-4">
+          {/* 顶部快捷导航：和左侧菜单保持一致 */}
           <CNavItem>
             <CNavLink to="/dashboard" as={NavLink}>
-              Dashboard
+              数据看板
             </CNavLink>
           </CNavItem>
+
           <CNavItem>
-            <CNavLink href="#">Users</CNavLink>
+            <CNavLink to="/users" as={NavLink}>
+              用户管理
+            </CNavLink>
           </CNavItem>
+
           <CNavItem>
-            <CNavLink href="#">Settings</CNavLink>
+            <CNavLink to="/rooms" as={NavLink}>
+              房间管理
+            </CNavLink>
+          </CNavItem>
+
+          <CNavItem>
+            <CNavLink to="/runs" as={NavLink}>
+              运行记录
+            </CNavLink>
           </CNavItem>
         </CHeaderNav>
+
         <CHeaderNav className="ms-auto">
           <CNavItem>
             <CNavLink href="#">

@@ -1,9 +1,13 @@
-import React from 'react'
+import React, { useMemo, useState } from 'react'
 import {
   CBadge,
   CCard,
   CCardBody,
   CCardHeader,
+  CCol,
+  CFormInput,
+  CFormSelect,
+  CRow,
   CTable,
   CTableBody,
   CTableDataCell,
@@ -12,6 +16,7 @@ import {
   CTableRow,
 } from '@coreui/react'
 
+// mock 运行记录：对应主项目中的代码运行结果
 const records = [
   {
     id: 1,
@@ -40,17 +45,64 @@ const records = [
     exitCode: 0,
     runTime: '2026-06-29 21:30',
   },
+  {
+    id: 4,
+    roomId: 'interview-demo',
+    filename: 'demo.js',
+    language: 'JavaScript',
+    status: 'failed',
+    exitCode: 1,
+    runTime: '2026-06-30 09:12',
+  },
 ]
 
 const Runs = () => {
+  const [keyword, setKeyword] = useState('')
+  const [statusFilter, setStatusFilter] = useState('all')
+
+  // 根据房间号 / 文件名 / 运行状态筛选
+  const filteredRecords = useMemo(() => {
+    return records.filter((record) => {
+      const matchKeyword =
+        record.roomId.toLowerCase().includes(keyword.toLowerCase()) ||
+        record.filename.toLowerCase().includes(keyword.toLowerCase())
+
+      const matchStatus = statusFilter === 'all' || record.status === statusFilter
+
+      return matchKeyword && matchStatus
+    })
+  }, [keyword, statusFilter])
+
   return (
     <CCard className="mb-4">
       <CCardHeader>
         <strong>运行记录</strong>
-        <span className="text-body-secondary ms-2">查看代码执行状态和退出码</span>
+        <span className="text-body-secondary ms-2">查看代码执行状态、退出码和运行时间</span>
       </CCardHeader>
 
       <CCardBody>
+        <CRow className="mb-3">
+          <CCol md={6}>
+            <CFormInput
+              placeholder="搜索房间号或文件名，例如 react-room-001 / index.js"
+              value={keyword}
+              onChange={(e) => setKeyword(e.target.value)}
+            />
+          </CCol>
+
+          <CCol md={3}>
+            <CFormSelect value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+              <option value="all">全部状态</option>
+              <option value="success">成功</option>
+              <option value="failed">失败</option>
+            </CFormSelect>
+          </CCol>
+
+          <CCol md={3} className="d-flex align-items-center text-body-secondary">
+            当前共 {filteredRecords.length} 条记录
+          </CCol>
+        </CRow>
+
         <CTable hover responsive align="middle">
           <CTableHead>
             <CTableRow>
@@ -64,7 +116,7 @@ const Runs = () => {
           </CTableHead>
 
           <CTableBody>
-            {records.map((record) => (
+            {filteredRecords.map((record) => (
               <CTableRow key={record.id}>
                 <CTableDataCell>{record.roomId}</CTableDataCell>
                 <CTableDataCell>{record.filename}</CTableDataCell>

@@ -1,10 +1,10 @@
 import React from 'react'
 
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
-const Users = React.lazy(() => import('./views/users/Users'))
-const Rooms = React.lazy(() => import('./views/rooms/Rooms'))
-const Files = React.lazy(() => import('./views/files/Files'))
-const Runs = React.lazy(() => import('./views/runs/Runs'))
+const Users = React.lazy(() => import('./views/users/Users.jsx'))
+const Rooms = React.lazy(() => import('./views/rooms/Rooms.jsx'))
+const Files = React.lazy(() => import('./views/files/Files.jsx'))
+const Runs = React.lazy(() => import('./views/runs/Runs.jsx'))
 
 const routes = [
   { path: '/', exact: true, name: '首页' },
