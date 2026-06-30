@@ -1,270 +1,104 @@
-# CoreUI Free React Admin Template - Built for AI-Assisted Development [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social&logo=twitter)](https://twitter.com/intent/tweet?text=CoreUI%20-%20Free%React%204%20Admin%20Template%20&url=https://coreui.io&hashtags=bootstrap,admin,template,dashboard,panel,free,angular,react,vue)
+# Web IDE 项目管理后台
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT)
-[![@coreui coreui](https://img.shields.io/badge/@coreui%20-coreui-lightgrey.svg?style=flat-square)](https://github.com/coreui/coreui)
-[![npm package][npm-coreui-badge]][npm-coreui]
-[![NPM downloads][npm-coreui-download]][npm-coreui]
-[![@coreui react](https://img.shields.io/badge/@coreui%20-react-lightgrey.svg?style=flat-square)](https://github.com/coreui/react)
-[![npm package][npm-coreui-react-badge]][npm-coreui-react]
-[![NPM downloads][npm-coreui-react-download]][npm-coreui-react]  
+这是一个基于 **React + Vite + CoreUI** 开发的后台管理系统，用于管理多人协作 Web IDE 项目的用户、房间、文件和运行记录。
 
-[npm-coreui]: https://www.npmjs.com/package/@coreui/coreui
-[npm-coreui-badge]: https://img.shields.io/npm/v/@coreui/coreui.png?style=flat-square
-[npm-coreui-download]: https://img.shields.io/npm/dm/@coreui/coreui.svg?style=flat-square
-[npm-coreui-react]: https://www.npmjs.com/package/@coreui/react
-[npm-coreui-react-badge]: https://img.shields.io/npm/v/@coreui/react.png?style=flat-square
-[npm-coreui-react-download]: https://img.shields.io/npm/dm/@coreui/react.svg?style=flat-square
-[npm]: https://www.npmjs.com/package/@coreui/react
+本项目基于开源后台模板进行业务化改造，删除了原模板中的无关示例页面，并围绕 Web IDE 协作场景重新设计了数据看板、用户管理、房间管理、文件管理和运行记录等模块。
 
-[![Bootstrap Admin Template](https://assets.coreui.io/products/coreui-free-bootstrap-admin-template-light-dark.webp)](https://coreui.io/product/free-react-admin-template/)
+## 项目背景
 
-CoreUI is meant to be the UX game changer. Pure & transparent code is devoid of redundant components, so the app is light enough to offer ultimate user experience. This means mobile devices also, where the navigation is just as easy and intuitive as on a desktop or laptop. The CoreUI Layout API lets you customize your project for almost any device – be it Mobile, Web or WebApp – CoreUI covers them all!
+多人协作 Web IDE 项目支持用户进入协作房间、管理文件树、多人实时编辑代码、保存代码和运行代码。
 
-## Table of Contents
+为了方便展示系统运行状态，本项目设计了一个配套后台管理系统，用于查看：
 
-* [Versions](#versions)
-* [CoreUI PRO](#coreui-pro)
-* [CoreUI PRO React Admin Templates](#coreui-pro-react-admin-templates)
-* [Quick Start](#quick-start)
-* [Installation](#installation)
-* [Basic usage](#basic-usage)
-* [What's included](#whats-included)
-* [AI-Friendly Development](#ai-friendly-development)
-* [Documentation](#documentation)
-* [Components](#components)
-* [Versioning](#versioning)
-* [Creators](#creators)
-* [Community](#community)
-* [Support CoreUI Development](#support-coreui-development)
-* [Copyright and License](#copyright-and-license)
+- 协作用户信息
+- 房间在线状态
+- 项目文件信息
+- 代码运行记录
+- 系统核心数据统计
 
-## Versions
+## 技术栈
 
-* [CoreUI Free Bootstrap Admin Template](https://github.com/coreui/coreui-free-bootstrap-admin-template)
-* [CoreUI Free Angular Admin Template](https://github.com/coreui/coreui-free-angular-admin-template)
-* [CoreUI Free React.js Admin Template (Vite)](https://github.com/coreui/coreui-free-react-admin-template)
-* [CoreUI Free React.js Admin Template (Create React App)](https://github.com/coreui/coreui-free-react-admin-template-cra)
-* [CoreUI Free Vue.js Admin Template](https://github.com/coreui/coreui-free-vue-admin-template)
+- React
+- Vite
+- JavaScript
+- CoreUI React
+- React Router
+- Bootstrap
+- Sass
 
-## CoreUI PRO
+## 功能模块
 
-* 💪  [CoreUI PRO Angular Admin Template](https://coreui.io/product/angular-dashboard-template/)
-* 💪  [CoreUI PRO Bootstrap Admin Template](https://coreui.io/product/bootstrap-dashboard-template/)
-* 💪  [CoreUI PRO Next.js Admin Template](https://coreui.io/product/next-js-dashboard-template/)
-* 💪  [CoreUI PRO React Admin Template](https://coreui.io/product/react-dashboard-template/)
-* 💪  [CoreUI PRO Vue Admin Template](https://coreui.io/product/vue-dashboard-template/)
+### 1. 数据看板
 
-## CoreUI PRO React Admin Templates
+数据看板用于展示 Web IDE 的核心运行数据，包括：
 
-| Default Theme | Light Theme |
-| --- | --- |
-| [![CoreUI PRO React Admin Template](https://coreui.io/images/templates/coreui_pro_default_light_dark.webp)](https://coreui.io/product/react-dashboard-template/?theme=default) | [![CoreUI PRO React Admin Template](https://coreui.io/images/templates/coreui_pro_light_light_dark.webp)](https://coreui.io/product/react-dashboard-template/?theme=light)|
+- 总用户数
+- 在线房间数
+- 今日运行次数
+- 今日保存次数
+- 最近活跃房间
+- 最近运行记录
 
-| Modern Theme | Bright Theme |
-| --- | --- |
-| [![CoreUI PRO React Admin Template](https://coreui.io/images/templates/coreui_pro_default_v3_light_dark.webp)](https://coreui.io/product/react-dashboard-template/?theme=modern) | [![CoreUI PRO React Admin Template](https://coreui.io/images/templates/coreui_pro_light_v3_light_dark.webp)](https://coreui.io/product/react-dashboard-template/?theme=bright)|
+### 2. 用户管理
 
-## Quick Start
+用户管理模块用于展示协作用户信息。
 
-- [Download the latest release](https://github.com/coreui/coreui-free-react-admin-template/archive/refs/heads/main.zip)
-- Clone the repo: `git clone https://github.com/coreui/coreui-free-react-admin-template.git`
+已实现功能：
 
-### Installation
+- 用户名 / 房间号搜索
+- 在线状态筛选
+- 筛选条件重置
+- 空状态提示
+- 用户详情弹窗
 
-``` bash
-$ npm install
-```
+### 3. 房间管理
 
-or
+房间管理模块用于查看协作房间状态。
 
-``` bash
-$ yarn install
-```
+已实现功能：
 
-### Basic usage
+- 房间号 / 创建人搜索
+- 房间状态筛选
+- 在线人数展示
+- 文件数量展示
+- 房间详情弹窗
 
-``` bash
-# dev server with hot reload at http://localhost:3000
-$ npm start 
-```
+### 4. 文件管理
 
-or 
+文件管理模块用于查看 Web IDE 中的项目文件。
 
-``` bash
-# dev server with hot reload at http://localhost:3000
-$ yarn start
-```
+已实现功能：
 
-Navigate to [http://localhost:3000](http://localhost:3000). The app will automatically reload if you change any of the source files.
+- 文件名 / 房间号搜索
+- 文件类型筛选
+- 文件大小展示
+- 更新时间展示
+- 文件详情弹窗
 
-#### Build
+### 5. 运行记录
 
-Run `build` to build the project. The build artifacts will be stored in the `build/` directory.
+运行记录模块用于查看代码运行结果。
+
+已实现功能：
+
+- 房间号 / 文件名搜索
+- 运行状态筛选
+- 退出码展示
+- 执行耗时展示
+- 运行详情弹窗
+
+## 项目亮点
+
+- 基于 React Router 配置后台页面路由，实现多个业务模块切换。
+- 使用 CoreUI 组件快速搭建后台布局、表格、卡片、徽章和弹窗。
+- 结合多人协作 Web IDE 业务场景，设计用户、房间、文件、运行记录等管理模块。
+- 实现搜索、筛选、重置、空状态和详情弹窗等后台常见交互。
+- 对开源后台模板进行业务化改造，统一页面文案、菜单结构和项目主题。
+
+## 项目运行
+
+### 安装依赖
 
 ```bash
-# build for production with minification
-$ npm run build
+npm install
 ```
-
-or
-
-```bash
-# build for production with minification
-$ yarn build
-```
-
-## What's included
-
-Within the download you'll find the following directories and files, logically grouping common assets and providing both compiled and minified variations. You'll see something like this:
-
-```
-coreui-free-react-admin-template
-├── public/          # static files
-│   ├── favicon.ico
-│   └── manifest.json
-│
-├── src/             # project root
-│   ├── assets/      # images, icons, etc.
-│   ├── components/  # common components - header, footer, sidebar, etc.
-│   ├── layouts/     # layout containers
-│   ├── scss/        # scss styles
-│   ├── views/       # application views
-│   ├── _nav.jsx     # sidebar navigation config
-│   ├── App.jsx
-│   ├── index.jsx
-│   ├── routes.js    # routes config
-│   └── store.js     # template state example 
-│
-├── index.html       # html template
-├── ...
-├── package.json
-├── ...
-└── vite.config.mjs  # vite config
-```
-
-## AI-Friendly Development
-
-This template is optimized for AI-assisted development with comprehensive context files and documentation:
-
-### Context Files
-- **`.cursorrules`** - Comprehensive AI context file with project conventions, patterns, and guidelines for working with React, CoreUI, and the template architecture
-- **`ARCHITECTURE.md`** - Detailed technical documentation covering the project structure, component hierarchy, routing system, state management, and build pipeline
-- **`DEVELOPMENT.md`** - Practical developer guide with setup instructions, development workflows, code examples, and best practices
-
-### Code Documentation
-- All React components include detailed JSDoc comments with parameter types and descriptions
-- Inline documentation explaining complex logic and patterns
-- PropTypes definitions for runtime type checking
-
-### Benefits for AI Coding Assistants
-
-When using AI coding assistants like Cursor, Claude Code, or GitHub Copilot, these context files help the AI to:
-
-- **Understand the Stack**: Recognize that this is a React 19 application using CoreUI React components (not Tailwind CSS or other frameworks)
-- **Follow Patterns**: Generate code that matches the project's component structure and conventions
-- **Use Correct Components**: Suggest appropriate CoreUI React components from `@coreui/react`
-- **Maintain Code Style**: Follow ESLint and Prettier rules automatically
-- **Respect Architecture**: Work within the established routing, state management, and styling patterns
-
-Simply open the project in your AI-enabled IDE, and the assistant will automatically have context about the React architecture, CoreUI React component usage, development workflows, and coding standards.
-
-## Documentation
-
-The documentation for the CoreUI Admin Template is hosted at our website [CoreUI for React](https://coreui.io/react/docs/templates/installation/)
-
-## Components
-
-CoreUI React.js Admin Templates are built on top of CoreUI and CoreUI PRO UI components libraries, including all of these components.
-
-- [React Accordion](https://coreui.io/react/docs/components/accordion/)
-- [React Alert](https://coreui.io/react/docs/components/alert/)
-- [React Autocomplete](https://coreui.io/react/docs/forms/autocomplete/) **PRO**
-- [React Avatar](https://coreui.io/react/docs/components/avatar/)
-- [React Badge](https://coreui.io/react/docs/components/badge/)
-- [React Breadcrumb](https://coreui.io/react/docs/components/breadcrumb/)
-- [React Button](https://coreui.io/react/docs/components/button/)
-- [React Button Group](https://coreui.io/react/docs/components/button-group/)
-- [React Callout](https://coreui.io/react/docs/components/callout/)
-- [React Card](https://coreui.io/react/docs/components/card/)
-- [React Carousel](https://coreui.io/react/docs/components/carousel/)
-- [React Checkbox](https://coreui.io/react/docs/forms/checkbox/)
-- [React Close Button](https://coreui.io/react/docs/components/close-button/)
-- [React Collapse](https://coreui.io/react/docs/components/collapse/)
-- [React Date Picker](https://coreui.io/react/docs/forms/date-picker/) **PRO**
-- [React Date Range Picker](https://coreui.io/react/docs/forms/date-range-picker/) **PRO**
-- [React Dropdown](https://coreui.io/react/docs/components/dropdown/)
-- [React Floating Labels](https://coreui.io/react/docs/forms/floating-labels/)
-- [React Footer](https://coreui.io/react/docs/components/footer/)
-- [React Header](https://coreui.io/react/docs/components/header/)
-- [React Image](https://coreui.io/react/docs/components/image/)
-- [React Input](https://coreui.io/react/docs/forms/input/)
-- [React Input Group](https://coreui.io/react/docs/forms/input-group/)
-- [React List Group](https://coreui.io/react/docs/components/list-group/)
-- [React Loading Button](https://coreui.io/react/docs/components/loading-button/) **PRO**
-- [React Modal](https://coreui.io/react/docs/components/modal/)
-- [React Multi Select](https://coreui.io/react/docs/forms/multi-select/) **PRO**
-- [React Navs & Tabs](https://coreui.io/react/docs/components/navs-tabs/)
-- [React Navbar](https://coreui.io/react/docs/components/navbar/)
-- [React Offcanvas](https://coreui.io/react/docs/components/offcanvas/)
-- [React One Time Password Input](https://coreui.io/react/docs/forms/one-time-password-input/) **PRO**
-- [React Pagination](https://coreui.io/react/docs/components/pagination/)
-- [React Password Input](https://coreui.io/react/docs/forms/password-input/) **PRO**
-- [React Placeholder](https://coreui.io/react/docs/components/placeholder/)
-- [React Popover](https://coreui.io/react/docs/components/popover/)
-- [React Progress](https://coreui.io/react/docs/components/progress/)
-- [React Radio](https://coreui.io/react/docs/forms/radio/)
-- [React Range](https://coreui.io/react/docs/forms/range/)
-- [React Range Slider](https://coreui.io/react/docs/forms/range-slider/) **PRO**
-- [React Rating](https://coreui.io/react/docs/forms/rating/)
-- [React Select](https://coreui.io/react/docs/forms/select/)
-- [React Sidebar](https://coreui.io/react/docs/components/sidebar/)
-- [React Smart Pagination](https://coreui.io/react/docs/components/smart-pagination/) **PRO**
-- [React Smart Table](https://coreui.io/react/docs/components/smart-table/) **PRO**
-- [React Spinner](https://coreui.io/react/docs/components/spinner/)
-- [React Stepper](https://coreui.io/react/docs/forms/stepper/) **PRO**
-- [React Switch](https://coreui.io/react/docs/forms/switch/)
-- [React Table](https://coreui.io/react/docs/components/table/)
-- [React Textarea](https://coreui.io/react/docs/forms/textarea/)
-- [React Time Picker](https://coreui.io/react/docs/forms/time-picker/) **PRO**
-- [React Toast](https://coreui.io/react/docs/components/toast/)
-- [React Tooltip](https://coreui.io/react/docs/components/tooltip/)
-
-## Versioning
-
-For transparency into our release cycle and in striving to maintain backward compatibility, CoreUI Free Admin Template is maintained under [the Semantic Versioning guidelines](http://semver.org/).
-
-See [the Releases section of our project](https://github.com/coreui/coreui-free-react-admin-template/releases) for changelogs for each release version.
-
-## Creators
-
-**Łukasz Holeczek**
-
-* <https://twitter.com/lukaszholeczek>
-* <https://github.com/mrholek>
-
-**Andrzej Kopański**
-
-* <https://github.com/xidedix>
-
-**CoreUI Team**
-
-* <https://twitter.com/core_ui>
-* <https://github.com/coreui>
-* <https://github.com/orgs/coreui/people>
-
-## Community
-
-Get updates on CoreUI's development and chat with the project maintainers and community members.
-
-- Follow [@core_ui on Twitter](https://twitter.com/core_ui).
-- Read and subscribe to [CoreUI Blog](https://coreui.ui/blog/).
-
-## Support CoreUI Development
-
-CoreUI is an MIT-licensed open source project and is completely free to use. However, the amount of effort needed to maintain and develop new features for the project is not sustainable without proper financial backing. You can support development by buying the [CoreUI PRO](https://coreui.io/pricing/?framework=react&src=github-coreui-free-react-admin-template) or by becoming a sponsor via [Open Collective](https://opencollective.com/coreui/).
-
-## Copyright and License
-
-copyright 2026 creativeLabs Łukasz Holeczek.   
-
-Code released under [the MIT license](https://github.com/coreui/coreui-free-react-admin-template/blob/main/LICENSE).
