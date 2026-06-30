@@ -124,7 +124,8 @@ const Dashboard = () => {
         <CCardBody>
           <h4 className="mb-2">Web IDE 数据看板</h4>
           <p className="text-body-secondary mb-0">
-            当前后台用于管理多人协作 Web IDE 的用户、房间、文件和代码运行记录。
+            本后台用于展示多人协作 Web IDE
+            的核心运行数据，包括用户在线状态、协作房间、项目文件和代码执行记录。
           </p>
         </CCardBody>
       </CCard>
@@ -145,12 +146,7 @@ const Dashboard = () => {
                 <div className="small text-body-secondary mt-1">{item.desc}</div>
 
                 {/* 进度条只是做可视化展示，不代表真实计算 */}
-                <CProgress
-                  thin
-                  color={item.color}
-                  value={item.progress}
-                  className="mt-3"
-                />
+                <CProgress thin color={item.color} value={item.progress} className="mt-3" />
               </CCardBody>
             </CCard>
           </CCol>
@@ -163,9 +159,7 @@ const Dashboard = () => {
           <CCard className="mb-4">
             <CCardHeader>
               <strong>最近活跃房间</strong>
-              <span className="text-body-secondary ms-2">
-                展示当前协作房间状态
-              </span>
+              <span className="text-body-secondary ms-2">展示当前协作房间状态</span>
             </CCardHeader>
 
             <CCardBody>
@@ -207,9 +201,7 @@ const Dashboard = () => {
           <CCard className="mb-4">
             <CCardHeader>
               <strong>最近运行记录</strong>
-              <span className="text-body-secondary ms-2">
-                展示代码执行结果
-              </span>
+              <span className="text-body-secondary ms-2">展示代码执行结果</span>
             </CCardHeader>
 
             <CCardBody>

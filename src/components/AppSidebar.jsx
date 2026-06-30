@@ -30,12 +30,8 @@ import {
   CSidebarHeader,
   CSidebarToggler,
 } from '@coreui/react'
-import CIcon from '@coreui/icons-react'
 
 import { AppSidebarNav } from './AppSidebarNav'
-
-import { logo } from 'src/assets/brand/logo'
-import { sygnet } from 'src/assets/brand/sygnet'
 
 // sidebar nav config
 import navigation from '../_nav'
@@ -69,9 +65,12 @@ const AppSidebar = () => {
       }}
     >
       <CSidebarHeader className="border-bottom">
-        <CSidebarBrand to="/">
-          <CIcon customClassName="sidebar-brand-full" icon={logo} height={32} />
-          <CIcon customClassName="sidebar-brand-narrow" icon={sygnet} height={32} />
+        <CSidebarBrand to="/dashboard" className="text-decoration-none">
+          {/* 侧边栏品牌区域：把原来的 CoreUI Logo 改成我们自己的后台名称 */}
+          <div className="d-flex flex-column text-white px-3">
+            <strong className="fs-6">Web IDE Admin</strong>
+            <small className="text-white-50">协作空间管理后台</small>
+          </div>
         </CSidebarBrand>
         <CCloseButton
           className="d-lg-none"

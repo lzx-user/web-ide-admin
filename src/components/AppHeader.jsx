@@ -85,6 +85,12 @@ const AppHeader = () => {
         >
           <CIcon icon={cilMenu} size="lg" />
         </CHeaderToggler>
+
+        {/* 顶部项目标题：说明当前后台系统的业务身份 */}
+        <div className="d-none d-md-flex flex-column ms-3">
+          <strong className="fs-6">Web IDE 项目管理后台</strong>
+          <small className="text-body-secondary">用户 · 房间 · 文件 · 运行记录</small>
+        </div>
         <CHeaderNav className="d-none d-md-flex">
           <CNavItem>
             <CNavLink to="/dashboard" as={NavLink}>

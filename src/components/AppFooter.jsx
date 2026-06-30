@@ -4,18 +4,16 @@ import { CFooter } from '@coreui/react'
 const AppFooter = () => {
   return (
     <CFooter className="px-4">
+      {/* 左侧：项目名称和说明 */}
       <div>
-        <a href="https://coreui.io" target="_blank" rel="noopener noreferrer">
-          CoreUI
-        </a>
-        <span className="ms-1">&copy; 2026 creativeLabs.</span>
+        <span className="fw-semibold">Web IDE 项目管理后台</span>
+        <span className="ms-2 text-body-secondary">
+          用于管理多人协作 Web IDE 的用户、房间、文件和运行记录
+        </span>
       </div>
-      <div className="ms-auto">
-        <span className="me-1">Powered by</span>
-        <a href="https://coreui.io/react" target="_blank" rel="noopener noreferrer">
-          CoreUI React Admin &amp; Dashboard Template
-        </a>
-      </div>
+
+      {/* 右侧：开发说明 */}
+      <div className="ms-auto text-body-secondary">React + Vite + CoreUI</div>
     </CFooter>
   )
 }
