@@ -1,13 +1,8 @@
 import React from 'react'
-import classNames from 'classnames'
-
 import {
-  CAvatar,
-  CButton,
-  CButtonGroup,
+  CBadge,
   CCard,
   CCardBody,
-  CCardFooter,
   CCardHeader,
   CCol,
   CProgress,
@@ -19,359 +14,226 @@ import {
   CTableHeaderCell,
   CTableRow,
 } from '@coreui/react'
-import CIcon from '@coreui/icons-react'
-import {
-  cibCcAmex,
-  cibCcApplePay,
-  cibCcMastercard,
-  cibCcPaypal,
-  cibCcStripe,
-  cibCcVisa,
-  cibGoogle,
-  cibFacebook,
-  cibLinkedin,
-  cifBr,
-  cifEs,
-  cifFr,
-  cifIn,
-  cifPl,
-  cifUs,
-  cibTwitter,
-  cilCloudDownload,
-  cilPeople,
-  cilUser,
-  cilUserFemale,
-} from '@coreui/icons'
 
-import avatar1 from 'src/assets/images/avatars/1.jpg'
-import avatar2 from 'src/assets/images/avatars/2.jpg'
-import avatar3 from 'src/assets/images/avatars/3.jpg'
-import avatar4 from 'src/assets/images/avatars/4.jpg'
-import avatar5 from 'src/assets/images/avatars/5.jpg'
-import avatar6 from 'src/assets/images/avatars/6.jpg'
+// ===============================
+// 1. 数据看板顶部统计卡片
+// 这里先使用 mock 数据，模拟后台接口返回的数据
+// 后面如果接真实后端，只需要把这些数据换成接口返回值即可
+// ===============================
+const statistics = [
+  {
+    title: '总用户数',
+    value: '128',
+    desc: '累计加入 Web IDE 的用户数量',
+    color: 'primary',
+    progress: 75,
+  },
+  {
+    title: '在线房间数',
+    value: '12',
+    desc: '当前正在协作编辑的房间',
+    color: 'success',
+    progress: 60,
+  },
+  {
+    title: '今日运行次数',
+    value: '86',
+    desc: '今日代码运行请求次数',
+    color: 'warning',
+    progress: 68,
+  },
+  {
+    title: '今日保存次数',
+    value: '214',
+    desc: '今日代码保存操作次数',
+    color: 'info',
+    progress: 82,
+  },
+]
 
-import WidgetsBrand from '../widgets/WidgetsBrand'
-import WidgetsDropdown from '../widgets/WidgetsDropdown'
-import MainChart from './MainChart'
+// ===============================
+// 2. 最近活跃房间数据
+// 对应你主项目里的 roomId、在线人数、文件数量等业务概念
+// ===============================
+const activeRooms = [
+  {
+    id: 1,
+    roomId: 'react-room-001',
+    owner: 'Amanda',
+    onlineCount: 3,
+    fileCount: 12,
+    status: 'active',
+    lastActive: '2026-06-30 14:32',
+  },
+  {
+    id: 2,
+    roomId: 'interview-demo',
+    owner: 'Tom',
+    onlineCount: 2,
+    fileCount: 8,
+    status: 'active',
+    lastActive: '2026-06-30 13:48',
+  },
+  {
+    id: 3,
+    roomId: 'demo-room-002',
+    owner: 'Lucy',
+    onlineCount: 0,
+    fileCount: 5,
+    status: 'idle',
+    lastActive: '2026-06-29 22:15',
+  },
+]
+
+// ===============================
+// 3. 最近运行记录
+// 对应你主项目里的 executeCode、codeOutput、executionFinished 等运行流程
+// ===============================
+const runRecords = [
+  {
+    id: 1,
+    roomId: 'react-room-001',
+    filename: 'index.js',
+    status: 'success',
+    exitCode: 0,
+    runTime: '2026-06-30 14:35',
+  },
+  {
+    id: 2,
+    roomId: 'react-room-001',
+    filename: 'test.js',
+    status: 'failed',
+    exitCode: 1,
+    runTime: '2026-06-30 14:02',
+  },
+  {
+    id: 3,
+    roomId: 'interview-demo',
+    filename: 'main.js',
+    status: 'success',
+    exitCode: 0,
+    runTime: '2026-06-30 13:50',
+  },
+]
 
 const Dashboard = () => {
-  const progressExample = [
-    { title: 'Visits', value: '29.703 Users', percent: 40, color: 'success' },
-    { title: 'Unique', value: '24.093 Users', percent: 20, color: 'info' },
-    { title: 'Pageviews', value: '78.706 Views', percent: 60, color: 'warning' },
-    { title: 'New Users', value: '22.123 Users', percent: 80, color: 'danger' },
-    { title: 'Bounce Rate', value: 'Average Rate', percent: 40.15, color: 'primary' },
-  ]
-
-  const progressGroupExample1 = [
-    { title: 'Monday', value1: 34, value2: 78 },
-    { title: 'Tuesday', value1: 56, value2: 94 },
-    { title: 'Wednesday', value1: 12, value2: 67 },
-    { title: 'Thursday', value1: 43, value2: 91 },
-    { title: 'Friday', value1: 22, value2: 73 },
-    { title: 'Saturday', value1: 53, value2: 82 },
-    { title: 'Sunday', value1: 9, value2: 69 },
-  ]
-
-  const progressGroupExample2 = [
-    { title: 'Male', icon: cilUser, value: 53 },
-    { title: 'Female', icon: cilUserFemale, value: 43 },
-  ]
-
-  const progressGroupExample3 = [
-    { title: 'Organic Search', icon: cibGoogle, percent: 56, value: '191,235' },
-    { title: 'Facebook', icon: cibFacebook, percent: 15, value: '51,223' },
-    { title: 'Twitter', icon: cibTwitter, percent: 11, value: '37,564' },
-    { title: 'LinkedIn', icon: cibLinkedin, percent: 8, value: '27,319' },
-  ]
-
-  const tableExample = [
-    {
-      avatar: { src: avatar1, status: 'success' },
-      user: {
-        name: 'Yiorgos Avraamu',
-        new: true,
-        registered: 'Jan 1, 2023',
-      },
-      country: { name: 'USA', flag: cifUs },
-      usage: {
-        value: 50,
-        period: 'Jun 11, 2023 - Jul 10, 2023',
-        color: 'success',
-      },
-      payment: { name: 'Mastercard', icon: cibCcMastercard },
-      activity: '10 sec ago',
-    },
-    {
-      avatar: { src: avatar2, status: 'danger' },
-      user: {
-        name: 'Avram Tarasios',
-        new: false,
-        registered: 'Jan 1, 2023',
-      },
-      country: { name: 'Brazil', flag: cifBr },
-      usage: {
-        value: 22,
-        period: 'Jun 11, 2023 - Jul 10, 2023',
-        color: 'info',
-      },
-      payment: { name: 'Visa', icon: cibCcVisa },
-      activity: '5 minutes ago',
-    },
-    {
-      avatar: { src: avatar3, status: 'warning' },
-      user: { name: 'Quintin Ed', new: true, registered: 'Jan 1, 2023' },
-      country: { name: 'India', flag: cifIn },
-      usage: {
-        value: 74,
-        period: 'Jun 11, 2023 - Jul 10, 2023',
-        color: 'warning',
-      },
-      payment: { name: 'Stripe', icon: cibCcStripe },
-      activity: '1 hour ago',
-    },
-    {
-      avatar: { src: avatar4, status: 'secondary' },
-      user: { name: 'Enéas Kwadwo', new: true, registered: 'Jan 1, 2023' },
-      country: { name: 'France', flag: cifFr },
-      usage: {
-        value: 98,
-        period: 'Jun 11, 2023 - Jul 10, 2023',
-        color: 'danger',
-      },
-      payment: { name: 'PayPal', icon: cibCcPaypal },
-      activity: 'Last month',
-    },
-    {
-      avatar: { src: avatar5, status: 'success' },
-      user: {
-        name: 'Agapetus Tadeáš',
-        new: true,
-        registered: 'Jan 1, 2023',
-      },
-      country: { name: 'Spain', flag: cifEs },
-      usage: {
-        value: 22,
-        period: 'Jun 11, 2023 - Jul 10, 2023',
-        color: 'primary',
-      },
-      payment: { name: 'Google Wallet', icon: cibCcApplePay },
-      activity: 'Last week',
-    },
-    {
-      avatar: { src: avatar6, status: 'danger' },
-      user: {
-        name: 'Friderik Dávid',
-        new: true,
-        registered: 'Jan 1, 2023',
-      },
-      country: { name: 'Poland', flag: cifPl },
-      usage: {
-        value: 43,
-        period: 'Jun 11, 2023 - Jul 10, 2023',
-        color: 'success',
-      },
-      payment: { name: 'Amex', icon: cibCcAmex },
-      activity: 'Last week',
-    },
-  ]
-
   return (
     <>
-      <WidgetsDropdown className="mb-4" />
+      {/* 页面标题区域 */}
       <CCard className="mb-4">
         <CCardBody>
-          <CRow>
-            <CCol sm={5}>
-              <h4 id="traffic" className="card-title mb-0">
-                Traffic
-              </h4>
-              <div className="small text-body-secondary">January - July 2023</div>
-            </CCol>
-            <CCol sm={7} className="d-none d-md-block">
-              <CButton color="primary" className="float-end">
-                <CIcon icon={cilCloudDownload} />
-              </CButton>
-              <CButtonGroup className="float-end me-3">
-                {['Day', 'Month', 'Year'].map((value) => (
-                  <CButton
-                    color="outline-secondary"
-                    key={value}
-                    className="mx-0"
-                    active={value === 'Month'}
-                  >
-                    {value}
-                  </CButton>
-                ))}
-              </CButtonGroup>
-            </CCol>
-          </CRow>
-          <MainChart />
+          <h4 className="mb-2">Web IDE 数据看板</h4>
+          <p className="text-body-secondary mb-0">
+            当前后台用于管理多人协作 Web IDE 的用户、房间、文件和代码运行记录。
+          </p>
         </CCardBody>
-        <CCardFooter>
-          <CRow
-            xs={{ cols: 1, gutter: 4 }}
-            sm={{ cols: 2 }}
-            lg={{ cols: 4 }}
-            xl={{ cols: 5 }}
-            className="mb-2 text-center"
-          >
-            {progressExample.map((item, index, items) => (
-              <CCol
-                className={classNames({
-                  'd-none d-xl-block': index + 1 === items.length,
-                })}
-                key={index}
-              >
-                <div className="text-body-secondary">{item.title}</div>
-                <div className="fw-semibold text-truncate">
-                  {item.value} ({item.percent}%)
-                </div>
-                <CProgress thin className="mt-2" color={item.color} value={item.percent} />
-              </CCol>
-            ))}
-          </CRow>
-        </CCardFooter>
       </CCard>
-      <WidgetsBrand className="mb-4" withCharts />
+
+      {/* 顶部统计卡片 */}
       <CRow>
-        <CCol xs>
+        {statistics.map((item) => (
+          <CCol sm={6} xl={3} key={item.title}>
+            <CCard className="mb-4">
+              <CCardBody>
+                {/* 统计标题 */}
+                <div className="text-body-secondary small">{item.title}</div>
+
+                {/* 统计数值 */}
+                <div className="fs-4 fw-semibold mt-2">{item.value}</div>
+
+                {/* 说明文字 */}
+                <div className="small text-body-secondary mt-1">{item.desc}</div>
+
+                {/* 进度条只是做可视化展示，不代表真实计算 */}
+                <CProgress
+                  thin
+                  color={item.color}
+                  value={item.progress}
+                  className="mt-3"
+                />
+              </CCardBody>
+            </CCard>
+          </CCol>
+        ))}
+      </CRow>
+
+      <CRow>
+        {/* 最近活跃房间表格 */}
+        <CCol lg={7}>
           <CCard className="mb-4">
-            <CCardHeader>Traffic {' & '} Sales</CCardHeader>
+            <CCardHeader>
+              <strong>最近活跃房间</strong>
+              <span className="text-body-secondary ms-2">
+                展示当前协作房间状态
+              </span>
+            </CCardHeader>
+
             <CCardBody>
-              <CRow>
-                <CCol xs={12} md={6} xl={6}>
-                  <CRow>
-                    <CCol xs={6}>
-                      <div className="border-start border-start-4 border-start-info py-1 px-3">
-                        <div className="text-body-secondary text-truncate small">New Clients</div>
-                        <div className="fs-5 fw-semibold">9,123</div>
-                      </div>
-                    </CCol>
-                    <CCol xs={6}>
-                      <div className="border-start border-start-4 border-start-danger py-1 px-3 mb-3">
-                        <div className="text-body-secondary text-truncate small">
-                          Recurring Clients
-                        </div>
-                        <div className="fs-5 fw-semibold">22,643</div>
-                      </div>
-                    </CCol>
-                  </CRow>
-                  <hr className="mt-0" />
-                  {progressGroupExample1.map((item, index) => (
-                    <div className="progress-group mb-4" key={index}>
-                      <div className="progress-group-prepend">
-                        <span className="text-body-secondary small">{item.title}</span>
-                      </div>
-                      <div className="progress-group-bars">
-                        <CProgress thin color="info" value={item.value1} />
-                        <CProgress thin color="danger" value={item.value2} />
-                      </div>
-                    </div>
-                  ))}
-                </CCol>
-                <CCol xs={12} md={6} xl={6}>
-                  <CRow>
-                    <CCol xs={6}>
-                      <div className="border-start border-start-4 border-start-warning py-1 px-3 mb-3">
-                        <div className="text-body-secondary text-truncate small">Pageviews</div>
-                        <div className="fs-5 fw-semibold">78,623</div>
-                      </div>
-                    </CCol>
-                    <CCol xs={6}>
-                      <div className="border-start border-start-4 border-start-success py-1 px-3 mb-3">
-                        <div className="text-body-secondary text-truncate small">Organic</div>
-                        <div className="fs-5 fw-semibold">49,123</div>
-                      </div>
-                    </CCol>
-                  </CRow>
-
-                  <hr className="mt-0" />
-
-                  {progressGroupExample2.map((item, index) => (
-                    <div className="progress-group mb-4" key={index}>
-                      <div className="progress-group-header">
-                        <CIcon className="me-2" icon={item.icon} size="lg" />
-                        <span>{item.title}</span>
-                        <span className="ms-auto fw-semibold">{item.value}%</span>
-                      </div>
-                      <div className="progress-group-bars">
-                        <CProgress thin color="warning" value={item.value} />
-                      </div>
-                    </div>
-                  ))}
-
-                  <div className="mb-5"></div>
-
-                  {progressGroupExample3.map((item, index) => (
-                    <div className="progress-group" key={index}>
-                      <div className="progress-group-header">
-                        <CIcon className="me-2" icon={item.icon} size="lg" />
-                        <span>{item.title}</span>
-                        <span className="ms-auto fw-semibold">
-                          {item.value}{' '}
-                          <span className="text-body-secondary small">({item.percent}%)</span>
-                        </span>
-                      </div>
-                      <div className="progress-group-bars">
-                        <CProgress thin color="success" value={item.percent} />
-                      </div>
-                    </div>
-                  ))}
-                </CCol>
-              </CRow>
-
-              <br />
-
-              <CTable align="middle" className="mb-0 border" hover responsive>
-                <CTableHead className="text-nowrap">
+              <CTable hover responsive align="middle">
+                <CTableHead>
                   <CTableRow>
-                    <CTableHeaderCell className="bg-body-tertiary text-center">
-                      <CIcon icon={cilPeople} />
-                    </CTableHeaderCell>
-                    <CTableHeaderCell className="bg-body-tertiary">User</CTableHeaderCell>
-                    <CTableHeaderCell className="bg-body-tertiary text-center">
-                      Country
-                    </CTableHeaderCell>
-                    <CTableHeaderCell className="bg-body-tertiary">Usage</CTableHeaderCell>
-                    <CTableHeaderCell className="bg-body-tertiary text-center">
-                      Payment Method
-                    </CTableHeaderCell>
-                    <CTableHeaderCell className="bg-body-tertiary">Activity</CTableHeaderCell>
+                    <CTableHeaderCell>房间号</CTableHeaderCell>
+                    <CTableHeaderCell>创建人</CTableHeaderCell>
+                    <CTableHeaderCell>在线人数</CTableHeaderCell>
+                    <CTableHeaderCell>文件数</CTableHeaderCell>
+                    <CTableHeaderCell>状态</CTableHeaderCell>
+                    <CTableHeaderCell>最近活跃</CTableHeaderCell>
                   </CTableRow>
                 </CTableHead>
+
                 <CTableBody>
-                  {tableExample.map((item, index) => (
-                    <CTableRow v-for="item in tableItems" key={index}>
-                      <CTableDataCell className="text-center">
-                        <CAvatar size="md" src={item.avatar.src} status={item.avatar.status} />
-                      </CTableDataCell>
+                  {activeRooms.map((room) => (
+                    <CTableRow key={room.id}>
+                      <CTableDataCell>{room.roomId}</CTableDataCell>
+                      <CTableDataCell>{room.owner}</CTableDataCell>
+                      <CTableDataCell>{room.onlineCount}</CTableDataCell>
+                      <CTableDataCell>{room.fileCount}</CTableDataCell>
                       <CTableDataCell>
-                        <div>{item.user.name}</div>
-                        <div className="small text-body-secondary text-nowrap">
-                          <span>{item.user.new ? 'New' : 'Recurring'}</span> | Registered:{' '}
-                          {item.user.registered}
-                        </div>
+                        <CBadge color={room.status === 'active' ? 'success' : 'warning'}>
+                          {room.status === 'active' ? '活跃' : '空闲'}
+                        </CBadge>
                       </CTableDataCell>
-                      <CTableDataCell className="text-center">
-                        <CIcon size="xl" icon={item.country.flag} title={item.country.name} />
-                      </CTableDataCell>
+                      <CTableDataCell>{room.lastActive}</CTableDataCell>
+                    </CTableRow>
+                  ))}
+                </CTableBody>
+              </CTable>
+            </CCardBody>
+          </CCard>
+        </CCol>
+
+        {/* 最近运行记录表格 */}
+        <CCol lg={5}>
+          <CCard className="mb-4">
+            <CCardHeader>
+              <strong>最近运行记录</strong>
+              <span className="text-body-secondary ms-2">
+                展示代码执行结果
+              </span>
+            </CCardHeader>
+
+            <CCardBody>
+              <CTable hover responsive align="middle">
+                <CTableHead>
+                  <CTableRow>
+                    <CTableHeaderCell>房间号</CTableHeaderCell>
+                    <CTableHeaderCell>文件</CTableHeaderCell>
+                    <CTableHeaderCell>状态</CTableHeaderCell>
+                    <CTableHeaderCell>退出码</CTableHeaderCell>
+                  </CTableRow>
+                </CTableHead>
+
+                <CTableBody>
+                  {runRecords.map((record) => (
+                    <CTableRow key={record.id}>
+                      <CTableDataCell>{record.roomId}</CTableDataCell>
+                      <CTableDataCell>{record.filename}</CTableDataCell>
                       <CTableDataCell>
-                        <div className="d-flex justify-content-between text-nowrap">
-                          <div className="fw-semibold">{item.usage.value}%</div>
-                          <div className="ms-3">
-                            <small className="text-body-secondary">{item.usage.period}</small>
-                          </div>
-                        </div>
-                        <CProgress thin color={item.usage.color} value={item.usage.value} />
+                        <CBadge color={record.status === 'success' ? 'success' : 'danger'}>
+                          {record.status === 'success' ? '成功' : '失败'}
+                        </CBadge>
                       </CTableDataCell>
-                      <CTableDataCell className="text-center">
-                        <CIcon size="xl" icon={item.payment.icon} />
-                      </CTableDataCell>
-                      <CTableDataCell>
-                        <div className="small text-body-secondary text-nowrap">Last login</div>
-                        <div className="fw-semibold text-nowrap">{item.activity}</div>
-                      </CTableDataCell>
+                      <CTableDataCell>{record.exitCode}</CTableDataCell>
                     </CTableRow>
                   ))}
                 </CTableBody>
@@ -380,6 +242,45 @@ const Dashboard = () => {
           </CCard>
         </CCol>
       </CRow>
+
+      {/* 项目说明卡片 */}
+      <CCard className="mb-4">
+        <CCardHeader>
+          <strong>后台模块说明</strong>
+        </CCardHeader>
+
+        <CCardBody>
+          <CRow>
+            <CCol md={3}>
+              <h6>用户管理</h6>
+              <p className="text-body-secondary small mb-0">
+                管理进入 Web IDE 协作房间的用户信息和在线状态。
+              </p>
+            </CCol>
+
+            <CCol md={3}>
+              <h6>房间管理</h6>
+              <p className="text-body-secondary small mb-0">
+                查看房间号、在线人数、文件数量和最近活跃时间。
+              </p>
+            </CCol>
+
+            <CCol md={3}>
+              <h6>文件管理</h6>
+              <p className="text-body-secondary small mb-0">
+                管理协作空间中的代码文件、文件类型和更新时间。
+              </p>
+            </CCol>
+
+            <CCol md={3}>
+              <h6>运行记录</h6>
+              <p className="text-body-secondary small mb-0">
+                查看代码运行状态、退出码和运行时间，方便问题排查。
+              </p>
+            </CCol>
+          </CRow>
+        </CCardBody>
+      </CCard>
     </>
   )
 }
