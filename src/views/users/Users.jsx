@@ -1,4 +1,5 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
+import { getAdminUsers } from '../../api/admin'
 import {
   CBadge,
   CButton,
@@ -22,49 +23,6 @@ import {
   CTableRow,
 } from '@coreui/react'
 
-// ===============================
-// mock 用户数据
-// 当前版本先使用本地模拟数据，后续可以替换成后端接口返回的数据
-// ===============================
-const users = [
-  {
-    id: 1,
-    username: 'Amanda',
-    roomId: 'react-room-001',
-    role: '房主',
-    status: 'online',
-    joinTime: '2026-06-30 10:24',
-    lastActive: '2026-06-30 14:32',
-  },
-  {
-    id: 2,
-    username: 'Tom',
-    roomId: 'react-room-001',
-    role: '协作者',
-    status: 'online',
-    joinTime: '2026-06-30 10:31',
-    lastActive: '2026-06-30 14:18',
-  },
-  {
-    id: 3,
-    username: 'Lucy',
-    roomId: 'demo-room-002',
-    role: '协作者',
-    status: 'offline',
-    joinTime: '2026-06-29 21:08',
-    lastActive: '2026-06-29 22:15',
-  },
-  {
-    id: 4,
-    username: 'Jack',
-    roomId: 'interview-demo',
-    role: '协作者',
-    status: 'offline',
-    joinTime: '2026-06-29 19:18',
-    lastActive: '2026-06-29 20:40',
-  },
-]
-
 const Users = () => {
   // 搜索关键词：支持搜索用户名和房间号
   const [keyword, setKeyword] = useState('')
@@ -78,6 +36,28 @@ const Users = () => {
   // 当前点击查看的用户
   const [currentUser, setCurrentUser] = useState(null)
 
+  const [users, setUsers] = useState([])
+
+  const loadUsers = async () => {
+    try {
+      const res = await getAdminUsers({
+        page: 1,
+        pageSize: 100,
+        status: 'all',
+      })
+
+      if (res.success) {
+        setUsers(res.data?.list || [])
+      }
+    } catch (err) {
+      console.log('加载用户失败:', err)
+    }
+  }
+
+  useEffect(() => {
+    loadUsers()
+  }, [])
+
   // ===============================
   // 根据搜索条件过滤用户列表
   // useMemo 的作用：
@@ -86,14 +66,18 @@ const Users = () => {
   const filteredUsers = useMemo(() => {
     return users.filter((user) => {
       const matchKeyword =
-        user.username.toLowerCase().includes(keyword.toLowerCase()) ||
-        user.roomId.toLowerCase().includes(keyword.toLowerCase())
+        String(user.username || '')
+          .toLowerCase()
+          .includes(keyword.toLowerCase()) ||
+        String(user.roomId || '')
+          .toLowerCase()
+          .includes(keyword.toLowerCase())
 
       const matchStatus = statusFilter === 'all' || user.status === statusFilter
 
       return matchKeyword && matchStatus
     })
-  }, [keyword, statusFilter])
+  }, [users, keyword, statusFilter])
 
   // 点击查看按钮时，记录当前用户，并打开弹窗
   const handleViewUser = (user) => {

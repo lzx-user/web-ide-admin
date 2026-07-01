@@ -1,4 +1,5 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
+import { getAdminRooms } from '../../api/admin'
 import {
   CBadge,
   CButton,
@@ -22,61 +23,50 @@ import {
   CTableRow,
 } from '@coreui/react'
 
-// ===============================
-// mock 房间数据
-// 模拟 Web IDE 协作房间列表
-// ===============================
-const rooms = [
-  {
-    id: 1,
-    roomId: 'react-room-001',
-    owner: 'Amanda',
-    onlineCount: 3,
-    fileCount: 12,
-    status: 'active',
-    lastActive: '2026-06-30 11:20',
-    createTime: '2026-06-29 09:30',
-  },
-  {
-    id: 2,
-    roomId: 'demo-room-002',
-    owner: 'Lucy',
-    onlineCount: 0,
-    fileCount: 8,
-    status: 'idle',
-    lastActive: '2026-06-29 22:10',
-    createTime: '2026-06-29 18:20',
-  },
-  {
-    id: 3,
-    roomId: 'interview-demo',
-    owner: 'Tom',
-    onlineCount: 1,
-    fileCount: 5,
-    status: 'active',
-    lastActive: '2026-06-30 09:46',
-    createTime: '2026-06-30 08:50',
-  },
-]
-
 const Rooms = () => {
   const [keyword, setKeyword] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [visible, setVisible] = useState(false)
   const [currentRoom, setCurrentRoom] = useState(null)
 
+  const [rooms, setRooms] = useState([])
+
+  const loadRooms = async () => {
+    try {
+      const res = await getAdminRooms({
+        page: 1,
+        pageSize: 100,
+        status: 'all',
+      })
+
+      if (res.success) {
+        setRooms(res.data?.list || [])
+      }
+    } catch (err) {
+      console.log('加载房间失败:', err)
+    }
+  }
+
+  useEffect(() => {
+    loadRooms()
+  }, [])
+
   // 根据房间号、创建人、房间状态筛选数据
   const filteredRooms = useMemo(() => {
     return rooms.filter((room) => {
       const matchKeyword =
-        room.roomId.toLowerCase().includes(keyword.toLowerCase()) ||
-        room.owner.toLowerCase().includes(keyword.toLowerCase())
+        String(room.roomId || '')
+          .toLowerCase()
+          .includes(keyword.toLowerCase()) ||
+        String(room.owner || '')
+          .toLowerCase()
+          .includes(keyword.toLowerCase())
 
       const matchStatus = statusFilter === 'all' || room.status === statusFilter
 
       return matchKeyword && matchStatus
     })
-  }, [keyword, statusFilter])
+  }, [rooms, keyword, statusFilter])
 
   // 查看房间详情
   const handleViewRoom = (room) => {

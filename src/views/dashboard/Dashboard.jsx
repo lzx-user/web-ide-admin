@@ -1,12 +1,15 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {
+  CAlert,
   CBadge,
+  CButton,
   CCard,
   CCardBody,
   CCardHeader,
   CCol,
   CProgress,
   CRow,
+  CSpinner,
   CTable,
   CTableBody,
   CTableDataCell,
@@ -14,138 +17,94 @@ import {
   CTableHeaderCell,
   CTableRow,
 } from '@coreui/react'
-
-// ===============================
-// 1. 数据看板顶部统计卡片
-// 这里先使用 mock 数据，模拟后台接口返回的数据
-// 后面如果接真实后端，只需要把这些数据换成接口返回值即可
-// ===============================
-const statistics = [
-  {
-    title: '总用户数',
-    value: '128',
-    desc: '累计加入 Web IDE 的用户数量',
-    color: 'primary',
-    progress: 75,
-  },
-  {
-    title: '在线房间数',
-    value: '12',
-    desc: '当前正在协作编辑的房间',
-    color: 'success',
-    progress: 60,
-  },
-  {
-    title: '今日运行次数',
-    value: '86',
-    desc: '今日代码运行请求次数',
-    color: 'warning',
-    progress: 68,
-  },
-  {
-    title: '今日保存次数',
-    value: '214',
-    desc: '今日代码保存操作次数',
-    color: 'info',
-    progress: 82,
-  },
-]
-
-// ===============================
-// 2. 最近活跃房间数据
-// 对应你主项目里的 roomId、在线人数、文件数量等业务概念
-// ===============================
-const activeRooms = [
-  {
-    id: 1,
-    roomId: 'react-room-001',
-    owner: 'Amanda',
-    onlineCount: 3,
-    fileCount: 12,
-    status: 'active',
-    lastActive: '2026-06-30 14:32',
-  },
-  {
-    id: 2,
-    roomId: 'interview-demo',
-    owner: 'Tom',
-    onlineCount: 2,
-    fileCount: 8,
-    status: 'active',
-    lastActive: '2026-06-30 13:48',
-  },
-  {
-    id: 3,
-    roomId: 'demo-room-002',
-    owner: 'Lucy',
-    onlineCount: 0,
-    fileCount: 5,
-    status: 'idle',
-    lastActive: '2026-06-29 22:15',
-  },
-]
-
-// ===============================
-// 3. 最近运行记录
-// 对应你主项目里的 executeCode、codeOutput、executionFinished 等运行流程
-// ===============================
-const runRecords = [
-  {
-    id: 1,
-    roomId: 'react-room-001',
-    filename: 'index.js',
-    status: 'success',
-    exitCode: 0,
-    runTime: '2026-06-30 14:35',
-  },
-  {
-    id: 2,
-    roomId: 'react-room-001',
-    filename: 'test.js',
-    status: 'failed',
-    exitCode: 1,
-    runTime: '2026-06-30 14:02',
-  },
-  {
-    id: 3,
-    roomId: 'interview-demo',
-    filename: 'main.js',
-    status: 'success',
-    exitCode: 0,
-    runTime: '2026-06-30 13:50',
-  },
-]
+import { getAdminOverview } from '../../api/admin'
 
 const Dashboard = () => {
+  // 后端真实统计数据
+  const [statistics, setStatistics] = useState([])
+  const [activeRooms, setActiveRooms] = useState([])
+  const [runRecords, setRunRecords] = useState([])
+  const [charts, setCharts] = useState({
+    successRate: 0,
+    failedRate: 100,
+  })
+
+  // 页面状态
+  const [loading, setLoading] = useState(false)
+  const [errorMsg, setErrorMsg] = useState('')
+
+  const loadOverview = async () => {
+    setLoading(true)
+    setErrorMsg('')
+
+    try {
+      // 请求后端后台总览接口
+      // 实际地址：http://localhost:3000/api/admin/overview
+      const res = await getAdminOverview()
+
+      if (!res.success) {
+        setErrorMsg(res.message || '数据加载失败')
+        return
+      }
+
+      const data = res.data || {}
+
+      setStatistics(data.statistics || [])
+      setActiveRooms(data.activeRooms || [])
+      setRunRecords(data.runRecords || [])
+      setCharts(data.charts || { successRate: 0, failedRate: 100 })
+    } catch (err) {
+      setErrorMsg(err.message || '无法连接后端，请检查 localhost:3000 是否启动')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    loadOverview()
+  }, [])
+
   return (
     <>
-      {/* 页面标题区域 */}
       <CCard className="mb-4">
-        <CCardBody>
-          <h4 className="mb-2">Web IDE 数据看板</h4>
-          <p className="text-body-secondary mb-0">
-            本后台用于展示多人协作 Web IDE
-            的核心运行数据，包括用户在线状态、协作房间、项目文件和代码执行记录。
-          </p>
+        <CCardBody className="d-flex justify-content-between align-items-start">
+          <div>
+            <h4 className="mb-2">Web IDE 数据看板</h4>
+            <p className="text-body-secondary mb-0">
+              本后台用于展示多人协作 Web IDE
+              的核心运行数据，包括用户在线状态、协作房间、项目文件和代码执行记录。
+            </p>
+          </div>
+
+          <CButton color="primary" variant="outline" onClick={loadOverview} disabled={loading}>
+            {loading ? '刷新中...' : '刷新数据'}
+          </CButton>
         </CCardBody>
       </CCard>
 
-      {/* 顶部统计卡片 */}
+      {errorMsg && (
+        <CAlert color="danger" className="mb-4">
+          {errorMsg}
+        </CAlert>
+      )}
+
+      {loading && (
+        <CCard className="mb-4">
+          <CCardBody className="text-center py-4">
+            <CSpinner size="sm" className="me-2" />
+            正在加载后台真实数据...
+          </CCardBody>
+        </CCard>
+      )}
+
       <CRow>
         {statistics.map((item) => (
           <CCol sm={6} xl={3} key={item.title}>
             <CCard className="mb-4">
               <CCardBody>
-                {/* 统计标题 */}
                 <div className="text-body-secondary small">{item.title}</div>
-
-                {/* 统计数值 */}
                 <div className="fs-4 fw-semibold mt-2">{item.value}</div>
-
-                {/* 说明文字 */}
                 <div className="small text-body-secondary mt-1">{item.desc}</div>
-
-                {/* 进度条只是做可视化展示，不代表真实计算 */}
                 <CProgress thin color={item.color} value={item.progress} className="mt-3" />
               </CCardBody>
             </CCard>
@@ -154,7 +113,6 @@ const Dashboard = () => {
       </CRow>
 
       <CRow>
-        {/* 最近活跃房间表格 */}
         <CCol lg={7}>
           <CCard className="mb-4">
             <CCardHeader>
@@ -176,27 +134,34 @@ const Dashboard = () => {
                 </CTableHead>
 
                 <CTableBody>
-                  {activeRooms.map((room) => (
-                    <CTableRow key={room.id}>
-                      <CTableDataCell>{room.roomId}</CTableDataCell>
-                      <CTableDataCell>{room.owner}</CTableDataCell>
-                      <CTableDataCell>{room.onlineCount}</CTableDataCell>
-                      <CTableDataCell>{room.fileCount}</CTableDataCell>
-                      <CTableDataCell>
-                        <CBadge color={room.status === 'active' ? 'success' : 'warning'}>
-                          {room.status === 'active' ? '活跃' : '空闲'}
-                        </CBadge>
+                  {activeRooms.length > 0 ? (
+                    activeRooms.map((room) => (
+                      <CTableRow key={room.id}>
+                        <CTableDataCell>{room.roomId}</CTableDataCell>
+                        <CTableDataCell>{room.owner}</CTableDataCell>
+                        <CTableDataCell>{room.onlineCount}</CTableDataCell>
+                        <CTableDataCell>{room.fileCount}</CTableDataCell>
+                        <CTableDataCell>
+                          <CBadge color={room.status === 'active' ? 'success' : 'warning'}>
+                            {room.status === 'active' ? '活跃' : '空闲'}
+                          </CBadge>
+                        </CTableDataCell>
+                        <CTableDataCell>{room.lastActive}</CTableDataCell>
+                      </CTableRow>
+                    ))
+                  ) : (
+                    <CTableRow>
+                      <CTableDataCell colSpan={6} className="text-center text-body-secondary py-4">
+                        暂无房间数据
                       </CTableDataCell>
-                      <CTableDataCell>{room.lastActive}</CTableDataCell>
                     </CTableRow>
-                  ))}
+                  )}
                 </CTableBody>
               </CTable>
             </CCardBody>
           </CCard>
         </CCol>
 
-        {/* 最近运行记录表格 */}
         <CCol lg={5}>
           <CCard className="mb-4">
             <CCardHeader>
@@ -216,18 +181,26 @@ const Dashboard = () => {
                 </CTableHead>
 
                 <CTableBody>
-                  {runRecords.map((record) => (
-                    <CTableRow key={record.id}>
-                      <CTableDataCell>{record.roomId}</CTableDataCell>
-                      <CTableDataCell>{record.filename}</CTableDataCell>
-                      <CTableDataCell>
-                        <CBadge color={record.status === 'success' ? 'success' : 'danger'}>
-                          {record.status === 'success' ? '成功' : '失败'}
-                        </CBadge>
+                  {runRecords.length > 0 ? (
+                    runRecords.map((record) => (
+                      <CTableRow key={record.id}>
+                        <CTableDataCell>{record.roomId}</CTableDataCell>
+                        <CTableDataCell>{record.filename}</CTableDataCell>
+                        <CTableDataCell>
+                          <CBadge color={record.status === 'success' ? 'success' : 'danger'}>
+                            {record.status === 'success' ? '成功' : '失败'}
+                          </CBadge>
+                        </CTableDataCell>
+                        <CTableDataCell>{record.exitCode}</CTableDataCell>
+                      </CTableRow>
+                    ))
+                  ) : (
+                    <CTableRow>
+                      <CTableDataCell colSpan={4} className="text-center text-body-secondary py-4">
+                        暂无运行记录
                       </CTableDataCell>
-                      <CTableDataCell>{record.exitCode}</CTableDataCell>
                     </CTableRow>
-                  ))}
+                  )}
                 </CTableBody>
               </CTable>
             </CCardBody>
@@ -235,42 +208,18 @@ const Dashboard = () => {
         </CCol>
       </CRow>
 
-      {/* 项目说明卡片 */}
       <CCard className="mb-4">
         <CCardHeader>
-          <strong>后台模块说明</strong>
+          <strong>运行成功率</strong>
+          <span className="text-body-secondary ms-2">根据运行记录统计</span>
         </CCardHeader>
 
         <CCardBody>
-          <CRow>
-            <CCol md={3}>
-              <h6>用户管理</h6>
-              <p className="text-body-secondary small mb-0">
-                管理进入 Web IDE 协作房间的用户信息和在线状态。
-              </p>
-            </CCol>
+          <div className="mb-2">成功率：{charts.successRate}%</div>
+          <CProgress color="success" value={charts.successRate} className="mb-3" />
 
-            <CCol md={3}>
-              <h6>房间管理</h6>
-              <p className="text-body-secondary small mb-0">
-                查看房间号、在线人数、文件数量和最近活跃时间。
-              </p>
-            </CCol>
-
-            <CCol md={3}>
-              <h6>文件管理</h6>
-              <p className="text-body-secondary small mb-0">
-                管理协作空间中的代码文件、文件类型和更新时间。
-              </p>
-            </CCol>
-
-            <CCol md={3}>
-              <h6>运行记录</h6>
-              <p className="text-body-secondary small mb-0">
-                查看代码运行状态、退出码和运行时间，方便问题排查。
-              </p>
-            </CCol>
-          </CRow>
+          <div className="mb-2">失败率：{charts.failedRate}%</div>
+          <CProgress color="danger" value={charts.failedRate} />
         </CCardBody>
       </CCard>
     </>

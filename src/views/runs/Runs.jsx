@@ -1,4 +1,5 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
+import { getAdminRuns } from '../../api/admin'
 import {
   CBadge,
   CButton,
@@ -22,71 +23,50 @@ import {
   CTableRow,
 } from '@coreui/react'
 
-// ===============================
-// mock 运行记录
-// 对应主项目中代码运行、输出结果、退出码等业务概念
-// ===============================
-const records = [
-  {
-    id: 1,
-    roomId: 'react-room-001',
-    filename: 'index.js',
-    language: 'JavaScript',
-    status: 'success',
-    exitCode: 0,
-    runTime: '2026-06-30 11:25',
-    duration: '0.8s',
-  },
-  {
-    id: 2,
-    roomId: 'react-room-001',
-    filename: 'test.js',
-    language: 'JavaScript',
-    status: 'failed',
-    exitCode: 1,
-    runTime: '2026-06-30 10:40',
-    duration: '0.5s',
-  },
-  {
-    id: 3,
-    roomId: 'demo-room-002',
-    filename: 'main.js',
-    language: 'JavaScript',
-    status: 'success',
-    exitCode: 0,
-    runTime: '2026-06-29 21:30',
-    duration: '1.1s',
-  },
-  {
-    id: 4,
-    roomId: 'interview-demo',
-    filename: 'demo.js',
-    language: 'JavaScript',
-    status: 'failed',
-    exitCode: 1,
-    runTime: '2026-06-30 09:12',
-    duration: '0.6s',
-  },
-]
-
 const Runs = () => {
   const [keyword, setKeyword] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [visible, setVisible] = useState(false)
   const [currentRecord, setCurrentRecord] = useState(null)
 
+  const [records, setRecords] = useState([])
+
+  const loadRuns = async () => {
+    try {
+      const res = await getAdminRuns({
+        page: 1,
+        pageSize: 100,
+        status: 'all',
+      })
+
+      if (res.success) {
+        setRecords(res.data?.list || [])
+      }
+    } catch (err) {
+      console.log('加载运行记录失败:', err)
+    }
+  }
+
+  useEffect(() => {
+    loadRuns()
+  }, [])
+
   // 根据房间号、文件名、运行状态筛选数据
   const filteredRecords = useMemo(() => {
     return records.filter((record) => {
       const matchKeyword =
-        record.roomId.toLowerCase().includes(keyword.toLowerCase()) ||
-        record.filename.toLowerCase().includes(keyword.toLowerCase())
+        String(record.roomId || '')
+          .toLowerCase()
+          .includes(keyword.toLowerCase()) ||
+        String(record.filename || '')
+          .toLowerCase()
+          .includes(keyword.toLowerCase())
 
       const matchStatus = statusFilter === 'all' || record.status === statusFilter
 
       return matchKeyword && matchStatus
     })
-  }, [keyword, statusFilter])
+  }, [records, keyword, statusFilter])
 
   const handleViewRecord = (record) => {
     setCurrentRecord(record)

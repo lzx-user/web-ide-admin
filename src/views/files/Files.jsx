@@ -1,4 +1,5 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
+import { getAdminFiles } from '../../api/admin'
 import {
   CBadge,
   CButton,
@@ -22,67 +23,50 @@ import {
   CTableRow,
 } from '@coreui/react'
 
-// ===============================
-// mock 文件数据
-// 模拟 Web IDE 中不同房间的项目文件
-// ===============================
-const files = [
-  {
-    id: 1,
-    filename: 'src/App.jsx',
-    type: 'JavaScript',
-    roomId: 'react-room-001',
-    size: '12KB',
-    updateTime: '2026-06-30 11:12',
-    owner: 'Amanda',
-  },
-  {
-    id: 2,
-    filename: 'src/components/Editor.jsx',
-    type: 'JavaScript',
-    roomId: 'react-room-001',
-    size: '18KB',
-    updateTime: '2026-06-30 10:58',
-    owner: 'Tom',
-  },
-  {
-    id: 3,
-    filename: 'src/index.css',
-    type: 'CSS',
-    roomId: 'demo-room-002',
-    size: '6KB',
-    updateTime: '2026-06-29 20:35',
-    owner: 'Lucy',
-  },
-  {
-    id: 4,
-    filename: 'package.json',
-    type: 'JSON',
-    roomId: 'interview-demo',
-    size: '4KB',
-    updateTime: '2026-06-30 09:12',
-    owner: 'Tom',
-  },
-]
-
 const Files = () => {
   const [keyword, setKeyword] = useState('')
   const [typeFilter, setTypeFilter] = useState('all')
   const [visible, setVisible] = useState(false)
   const [currentFile, setCurrentFile] = useState(null)
 
+  const [files, setFiles] = useState([])
+
+  const loadFiles = async () => {
+    try {
+      const res = await getAdminFiles({
+        page: 1,
+        pageSize: 100,
+        type: 'all',
+      })
+
+      if (res.success) {
+        setFiles(res.data?.list || [])
+      }
+    } catch (err) {
+      console.log('加载文件失败:', err)
+    }
+  }
+
+  useEffect(() => {
+    loadFiles()
+  }, [])
+
   // 根据文件名、房间号、文件类型筛选数据
   const filteredFiles = useMemo(() => {
     return files.filter((file) => {
       const matchKeyword =
-        file.filename.toLowerCase().includes(keyword.toLowerCase()) ||
-        file.roomId.toLowerCase().includes(keyword.toLowerCase())
+        String(file.filename || '')
+          .toLowerCase()
+          .includes(keyword.toLowerCase()) ||
+        String(file.roomId || '')
+          .toLowerCase()
+          .includes(keyword.toLowerCase())
 
       const matchType = typeFilter === 'all' || file.type === typeFilter
 
       return matchKeyword && matchType
     })
-  }, [keyword, typeFilter])
+  }, [files, keyword, typeFilter])
 
   // 根据文件类型显示不同颜色标签
   const getTypeColor = (type) => {
