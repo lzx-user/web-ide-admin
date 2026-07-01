@@ -19,7 +19,9 @@
  * <Route path="*" element={<DefaultLayout />} />
  */
 
-import React from 'react'
+import React, { useState } from 'react'
+import AdminLogin from '../views/pages/login/AdminLogin'
+
 import { AppContent, AppSidebar, AppFooter, AppHeader } from '../components/index'
 
 /**
@@ -36,6 +38,15 @@ import { AppContent, AppSidebar, AppFooter, AppHeader } from '../components/inde
  * @returns {React.ReactElement} Complete application layout
  */
 const DefaultLayout = () => {
+  // 有 admin_token：显示后台布局 没有 admin_token：显示管理员登录页
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    Boolean(localStorage.getItem('admin_token')),
+  )
+
+  if (!isAuthenticated) {
+    return <AdminLogin onLoginSuccess={() => setIsAuthenticated(true)} />
+  }
+
   return (
     <div>
       <AppSidebar />
