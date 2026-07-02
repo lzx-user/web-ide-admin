@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { getAdminRuns } from '../../api/admin'
 import {
   CBadge,
@@ -28,8 +28,10 @@ const Runs = () => {
   const [statusFilter, setStatusFilter] = useState('all')
   const [visible, setVisible] = useState(false)
   const [currentRecord, setCurrentRecord] = useState(null)
-
   const [records, setRecords] = useState([])
+
+  // 缓存上一次接口返回的数据，用来判断是否真的发生变化
+  const recordsCacheRef = useRef('')
 
   const loadRuns = async () => {
     try {
@@ -39,9 +41,18 @@ const Runs = () => {
         status: 'all',
       })
 
-      if (res.success) {
-        setRecords(res.data?.list || [])
+      if (!res.success) return
+
+      const nextRecords = res.data?.list || []
+      const nextCache = JSON.stringify(nextRecords)
+
+      // 数据没有变化，就不 setState，避免无意义重新渲染
+      if (recordsCacheRef.current === nextCache) {
+        return
       }
+
+      recordsCacheRef.current = nextCache
+      setRecords(nextRecords)
     } catch (err) {
       console.log('加载运行记录失败:', err)
     }
@@ -49,18 +60,25 @@ const Runs = () => {
 
   useEffect(() => {
     loadRuns()
+
+    const timer = setInterval(() => {
+      loadRuns()
+    }, 3000)
+
+    return () => clearInterval(timer)
   }, [])
 
-  // 根据房间号、文件名、运行状态筛选数据
   const filteredRecords = useMemo(() => {
     return records.filter((record) => {
+      const lowerKeyword = keyword.toLowerCase()
+
       const matchKeyword =
         String(record.roomId || '')
           .toLowerCase()
-          .includes(keyword.toLowerCase()) ||
+          .includes(lowerKeyword) ||
         String(record.filename || '')
           .toLowerCase()
-          .includes(keyword.toLowerCase())
+          .includes(lowerKeyword)
 
       const matchStatus = statusFilter === 'all' || record.status === statusFilter
 
@@ -78,20 +96,36 @@ const Runs = () => {
     setStatusFilter('all')
   }
 
+  const getStatusBadge = (status) => {
+    if (status === 'success') {
+      return <CBadge color="success">成功</CBadge>
+    }
+
+    if (status === 'failed') {
+      return <CBadge color="danger">失败</CBadge>
+    }
+
+    return <CBadge color="secondary">未知</CBadge>
+  }
+
   return (
     <>
       <CCard className="mb-4">
         <CCardHeader>
           <strong>运行记录</strong>
-          <span className="text-body-secondary ms-2">查看代码执行状态、退出码和运行时间</span>
+          <span className="text-body-secondary ms-2">
+            查看代码执行状态、退出码、运行耗时和运行时间
+          </span>
+          <span className="text-body-secondary small ms-2">
+            数据每 3 秒检测一次，仅在有变化时更新页面
+          </span>
         </CCardHeader>
 
         <CCardBody>
-          {/* 搜索和筛选区域 */}
           <CRow className="mb-3 g-2">
             <CCol md={6}>
               <CFormInput
-                placeholder="搜索房间号或文件名，例如 react-room-001 / index.js"
+                placeholder="搜索房间号或文件名，例如 test-room-001 / index.js"
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
               />
@@ -109,7 +143,9 @@ const Runs = () => {
               <CButton color="secondary" variant="outline" onClick={handleReset}>
                 重置
               </CButton>
-
+              <CButton color="primary" variant="outline" onClick={loadRuns}>
+                刷新
+              </CButton>
               <span className="text-body-secondary small">
                 当前共 {filteredRecords.length} 条记录
               </span>
@@ -124,6 +160,7 @@ const Runs = () => {
                 <CTableHeaderCell>语言</CTableHeaderCell>
                 <CTableHeaderCell>运行状态</CTableHeaderCell>
                 <CTableHeaderCell>退出码</CTableHeaderCell>
+                <CTableHeaderCell>耗时</CTableHeaderCell>
                 <CTableHeaderCell>运行时间</CTableHeaderCell>
                 <CTableHeaderCell>操作</CTableHeaderCell>
               </CTableRow>
@@ -136,12 +173,9 @@ const Runs = () => {
                     <CTableDataCell>{record.roomId}</CTableDataCell>
                     <CTableDataCell>{record.filename}</CTableDataCell>
                     <CTableDataCell>{record.language}</CTableDataCell>
-                    <CTableDataCell>
-                      <CBadge color={record.status === 'success' ? 'success' : 'danger'}>
-                        {record.status === 'success' ? '成功' : '失败'}
-                      </CBadge>
-                    </CTableDataCell>
+                    <CTableDataCell>{getStatusBadge(record.status)}</CTableDataCell>
                     <CTableDataCell>{record.exitCode}</CTableDataCell>
+                    <CTableDataCell>{record.duration || '-'}</CTableDataCell>
                     <CTableDataCell>{record.runTime}</CTableDataCell>
                     <CTableDataCell>
                       <CButton
@@ -157,7 +191,7 @@ const Runs = () => {
                 ))
               ) : (
                 <CTableRow>
-                  <CTableDataCell colSpan={7} className="text-center text-body-secondary py-4">
+                  <CTableDataCell colSpan={8} className="text-center text-body-secondary py-4">
                     暂无匹配运行记录，请调整搜索条件
                   </CTableDataCell>
                 </CTableRow>
@@ -167,46 +201,56 @@ const Runs = () => {
         </CCardBody>
       </CCard>
 
-      {/* 运行记录详情弹窗 */}
       <CModal visible={visible} onClose={() => setVisible(false)}>
         <CModalHeader>
-          <CModalTitle>运行详情</CModalTitle>
+          <CModalTitle>运行记录详情</CModalTitle>
         </CModalHeader>
 
         <CModalBody>
-          {currentRecord && (
+          {currentRecord ? (
             <div className="small">
-              <p>
-                <strong>房间号：</strong>
-                {currentRecord.roomId}
-              </p>
-              <p>
-                <strong>文件名：</strong>
-                {currentRecord.filename}
-              </p>
-              <p>
-                <strong>运行语言：</strong>
-                {currentRecord.language}
-              </p>
-              <p>
-                <strong>运行状态：</strong>
-                <CBadge color={currentRecord.status === 'success' ? 'success' : 'danger'}>
-                  {currentRecord.status === 'success' ? '成功' : '失败'}
-                </CBadge>
-              </p>
-              <p>
-                <strong>退出码：</strong>
-                {currentRecord.exitCode}
-              </p>
-              <p>
-                <strong>执行耗时：</strong>
-                {currentRecord.duration}
-              </p>
-              <p className="mb-0">
-                <strong>运行时间：</strong>
-                {currentRecord.runTime}
-              </p>
+              <div className="mb-3">
+                <div className="text-body-secondary">房间号</div>
+                <div className="fw-semibold">{currentRecord.roomId}</div>
+              </div>
+
+              <div className="mb-3">
+                <div className="text-body-secondary">执行用户</div>
+                <div className="fw-semibold">{currentRecord.username || '-'}</div>
+              </div>
+
+              <div className="mb-3">
+                <div className="text-body-secondary">文件名</div>
+                <div className="fw-semibold">{currentRecord.filename}</div>
+              </div>
+
+              <div className="mb-3">
+                <div className="text-body-secondary">语言</div>
+                <div className="fw-semibold">{currentRecord.language || 'JavaScript'}</div>
+              </div>
+
+              <div className="mb-3">
+                <div className="text-body-secondary">运行状态</div>
+                <div>{getStatusBadge(currentRecord.status)}</div>
+              </div>
+
+              <div className="mb-3">
+                <div className="text-body-secondary">退出码</div>
+                <div className="fw-semibold">{currentRecord.exitCode}</div>
+              </div>
+
+              <div className="mb-3">
+                <div className="text-body-secondary">运行耗时</div>
+                <div className="fw-semibold">{currentRecord.duration || '-'}</div>
+              </div>
+
+              <div className="mb-0">
+                <div className="text-body-secondary">运行时间</div>
+                <div className="fw-semibold">{currentRecord.runTime}</div>
+              </div>
             </div>
+          ) : (
+            <div className="text-body-secondary">暂无详情数据</div>
           )}
         </CModalBody>
 
