@@ -36,6 +36,8 @@ request.interceptors.response.use(
     // token 失效时，清掉本地 token，避免一直拿旧 token 请求
     if (error.response?.status === 401 || error.response?.status === 403) {
       localStorage.removeItem('admin_token')
+      // 主动通知页面回到登录页
+      window.dispatchEvent(new Event('admin-auth-expired'))
     }
 
     return Promise.reject(error.response?.data || error)

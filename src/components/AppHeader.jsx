@@ -22,6 +22,7 @@ import React, { useEffect, useRef } from 'react'
 import { NavLink } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import {
+  CButton,
   CContainer,
   CDropdown,
   CDropdownItem,
@@ -59,7 +60,7 @@ import { AppHeaderDropdown } from './header/index'
  *
  * @returns {React.ReactElement} Header component with navigation and controls
  */
-const AppHeader = () => {
+const AppHeader = ({ onAdminLogout }) => {
   const headerRef = useRef()
   const { colorMode, setColorMode } = useColorModes('coreui-free-react-admin-template-theme')
 
@@ -136,6 +137,15 @@ const AppHeader = () => {
           </CNavItem>
         </CHeaderNav>
         <CHeaderNav>
+          <CButton
+            color="danger"
+            variant="outline"
+            size="sm"
+            className="me-3"
+            onClick={onAdminLogout}
+          >
+            退出登录
+          </CButton>
           <li className="nav-item py-1">
             <div className="vr h-100 mx-2 text-body text-opacity-75"></div>
           </li>

@@ -3,8 +3,8 @@ import { CAlert, CButton, CCard, CCardBody, CCol, CFormInput, CRow, CSpinner } f
 import { adminLogin } from '../../../api/admin'
 
 const AdminLogin = ({ onLoginSuccess }) => {
-  const [username, setUsername] = useState('admin')
-  const [password, setPassword] = useState('admin123456')
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
 
@@ -59,13 +59,14 @@ const AdminLogin = ({ onLoginSuccess }) => {
                 </CAlert>
               )}
 
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleSubmit} autoComplete="off">
                 <CFormInput
                   className="mb-3"
                   label="管理员账号"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="admin"
+                  autoComplete="off"
                 />
 
                 <CFormInput
@@ -75,6 +76,7 @@ const AdminLogin = ({ onLoginSuccess }) => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="admin123456"
+                  autoComplete="new-password"
                 />
 
                 <CButton color="primary" type="submit" className="w-100" disabled={loading}>

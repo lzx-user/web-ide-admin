@@ -19,7 +19,7 @@
  * <Route path="*" element={<DefaultLayout />} />
  */
 
-import React, { useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import AdminLogin from '../views/pages/login/AdminLogin'
 
 import { AppContent, AppSidebar, AppFooter, AppHeader } from '../components/index'
@@ -43,6 +43,23 @@ const DefaultLayout = () => {
     Boolean(localStorage.getItem('admin_token')),
   )
 
+  const handleAdminLogout = useCallback(() => {
+    localStorage.removeItem('admin_token')
+    setIsAuthenticated(false)
+  }, [setIsAuthenticated])
+
+  useEffect(() => {
+    const handleAuthExpired = () => {
+      handleAdminLogout()
+    }
+
+    window.addEventListener('admin-auth-expired', handleAuthExpired)
+
+    return () => {
+      window.removeEventListener('admin-auth-expired', handleAuthExpired)
+    }
+  }, [handleAdminLogout])
+
   if (!isAuthenticated) {
     return <AdminLogin onLoginSuccess={() => setIsAuthenticated(true)} />
   }
@@ -51,7 +68,7 @@ const DefaultLayout = () => {
     <div>
       <AppSidebar />
       <div className="wrapper d-flex flex-column min-vh-100">
-        <AppHeader />
+        <AppHeader onAdminLogout={handleAdminLogout} />
         <div className="body flex-grow-1">
           <AppContent />
         </div>

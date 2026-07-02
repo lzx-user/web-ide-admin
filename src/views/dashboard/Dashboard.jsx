@@ -70,7 +70,7 @@ const Dashboard = () => {
         <CCardBody className="d-flex justify-content-between align-items-start">
           <div>
             <h4 className="mb-2">Web IDE 数据看板</h4>
-            <p className="text-body-secondary mb-0">
+            <p className="text-body-secondary mb-1">
               本后台用于展示多人协作 Web IDE
               的核心运行数据，包括用户在线状态、协作房间、项目文件和代码执行记录。
             </p>
